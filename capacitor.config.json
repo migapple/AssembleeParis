@@ -1,0 +1,11 @@
+{
+  "appId": "com.michel.garlandat.assembleeParis",
+  "appName": "Assemblee Paris",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "ios": { "contentInset": "always" },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "SplashScreen": { "launchShowDuration": 0 }
+  }
+}
