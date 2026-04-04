@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr" style="background:#050D1A">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Présidents de l'Assemblée nationale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap"></noscript>
+<style>
+  :root {
+    --gold:#C9993A; --gold-light:#E8C76A; --gold-pale:#F5E8C0;
+    --ink:#050D1A; --parchment:#E8F0FA;
+    --r3:#8B6010; --r4:#1A5C7A; --r5:#1A3A8A;
+    --safe-top:env(safe-area-inset-top,0px); --safe-bot:env(safe-area-inset-bottom,0px);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--ink);color:var(--parchment);min-height:100vh;overflow-x:hidden;}
+
+  /* ── HEADER ── */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:linear-gradient(180deg,#020810 0%,#050D1A 100%);
+    border-bottom:1px solid rgba(201,153,58,0.3);
+    padding:calc(var(--safe-top) + 10px) 16px 12px;
+  }
+  .header-top{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px;}
+  header h1{
+    font-family:'IM Fell English',serif;font-size:20px;letter-spacing:0.03em;line-height:1.15;text-align:center;
+    background:linear-gradient(135deg,var(--gold-light) 0%,var(--gold) 40%,var(--gold-pale) 70%,var(--gold) 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .subtitle{text-align:center;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(201,153,58,0.4);margin-bottom:10px;font-style:italic;}
+  .search-wrap{position:relative;margin-bottom:8px;}
+  .search-wrap input{
+    width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,153,58,0.2);
+    border-radius:10px;padding:9px 36px 9px 14px;color:var(--parchment);
+    font-family:'Cormorant Garamond',serif;font-size:16px;outline:none;
+  }
+  .search-wrap input::placeholder{color:rgba(232,240,250,0.3);}
+  .search-wrap input:focus{border-color:rgba(201,153,58,0.45);background:rgba(255,255,255,0.07);}
+  .search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(201,153,58,0.5);font-size:18px;cursor:pointer;padding:4px;display:none;}
+  .filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+  .filters::-webkit-scrollbar{display:none;}
+  .pill{
+    flex-shrink:0;border:1px solid rgba(201,153,58,0.22);border-radius:20px;
+    background:rgba(255,255,255,0.04);color:rgba(232,240,250,0.5);
+    font-family:'Cormorant Garamond',serif;font-size:13px;padding:4px 13px;
+    cursor:pointer;transition:all .2s;white-space:nowrap;
+  }
+  .pill.active{background:rgba(201,153,58,0.14);border-color:rgba(201,153,58,0.5);color:var(--gold-light);}
+
+  /* ── LIST ── */
+  .count-bar{padding:8px 16px 4px;font-size:12px;color:rgba(232,240,250,0.3);letter-spacing:0.1em;font-style:italic;}
+  .list{padding:0 12px calc(var(--safe-bot) + 80px);}
+  .card{
+    display:flex;align-items:center;gap:12px;
+    background:linear-gradient(135deg,rgba(26,58,138,0.07) 0%,rgba(201,153,58,0.04) 100%);
+    border:1px solid rgba(201,153,58,0.11);border-radius:12px;
+    padding:10px 12px;margin-bottom:8px;cursor:pointer;
+    transition:border-color .2s,background .2s;position:relative;overflow:hidden;
+  }
+  .card:active{background:rgba(201,153,58,0.09);border-color:rgba(201,153,58,0.35);}
+
+  /* Portrait */
+  .portrait-wrap{
+    width:62px;height:72px;border-radius:8px;
+    border:1px solid rgba(201,153,58,0.22);flex-shrink:0;
+    overflow:hidden;background:rgba(26,58,138,0.1);position:relative;
+  }
+  .portrait-wrap img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;opacity:0;transition:opacity .4s;position:relative;z-index:1;}
+  .portrait-wrap img.loaded{opacity:1;}
+  .portrait-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;color:rgba(201,153,58,0.2);z-index:0;}
+  .portrait-spinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;}
+  .portrait-spinner-ring{width:18px;height:18px;border:2px solid rgba(201,153,58,0.1);border-top-color:rgba(201,153,58,0.5);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* Card text */
+  .pres-info{flex:1;min-width:0;}
+  .pres-rep{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:2px;font-weight:500;}
+  .pres-name{font-family:'IM Fell English',serif;font-size:17px;color:var(--gold-pale);line-height:1.15;margin-bottom:2px;}
+  .pres-parti{font-size:12px;font-style:italic;color:rgba(201,153,58,0.6);margin-bottom:3px;}
+  .pres-dates{font-size:12px;color:rgba(232,240,250,0.45);}
+  .badge-actuel{display:inline-block;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;border-radius:10px;background:rgba(42,138,80,0.15);border:1px solid rgba(42,138,80,0.4);color:#80E0A0;margin-left:6px;vertical-align:middle;}
+  .pres-arrow{font-size:20px;color:rgba(201,153,58,0.25);flex-shrink:0;}
+
+  /* ── MODAL ── */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(5,13,26,0.88);z-index:200;
+    display:flex;align-items:flex-end;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:all;}
+  .modal{
+    width:100%;max-width:480px;max-height:88vh;
+    background:linear-gradient(180deg,#0B1829 0%,#060E1C 100%);
+    border:1px solid rgba(201,153,58,0.22);border-bottom:none;
+    border-radius:20px 20px 0 0;overflow-y:auto;
+    transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);
+    padding-bottom:calc(var(--safe-bot) + 24px);
+  }
+  .modal-overlay.open .modal{transform:translateY(0);}
+  .modal-handle{width:36px;height:4px;background:rgba(201,153,58,0.22);border-radius:2px;margin:12px auto 0;}
+  .modal-close{position:absolute;top:calc(var(--safe-top) + 16px);right:16px;background:rgba(201,153,58,0.1);border:1px solid rgba(201,153,58,0.2);color:rgba(201,153,58,0.7);font-size:16px;border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .modal-head{display:flex;gap:14px;padding:calc(var(--safe-top) + 16px) 20px 16px;align-items:flex-start;position:relative;}
+  .modal-portrait{
+    width:80px;height:96px;border-radius:10px;flex-shrink:0;
+    border:1px solid rgba(201,153,58,0.28);overflow:hidden;
+    background:rgba(26,58,138,0.1);position:relative;
+  }
+  .modal-portrait img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;opacity:0;transition:opacity .4s;}
+  .modal-portrait img.loaded{opacity:1;}
+  .modal-portrait .portrait-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;color:rgba(201,153,58,0.22);}
+  .modal-title-block{flex:1;padding-right:36px;}
+  .modal-rep-tag{
+    display:inline-block;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
+    padding:3px 10px;border-radius:12px;margin-bottom:6px;
+  }
+  .modal-name{font-family:'IM Fell English',serif;font-size:22px;color:var(--gold-pale);line-height:1.1;margin-bottom:4px;}
+  .modal-parti{font-size:14px;font-style:italic;color:rgba(201,153,58,0.65);margin-bottom:4px;}
+  .modal-dates-big{font-size:13px;color:rgba(232,240,250,0.5);}
+  .modal-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(201,153,58,0.18),transparent);margin:0 20px;}
+  .modal-body{padding:16px 20px;}
+  .modal-section-title{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,153,58,0.45);margin-bottom:8px;}
+  .modal-desc{font-size:15px;line-height:1.65;color:rgba(232,240,250,0.8);margin-bottom:16px;}
+  .moments-list{list-style:none;}
+  .moments-list li{
+    font-size:14px;color:rgba(232,240,250,0.68);padding:5px 0 5px 18px;
+    position:relative;border-bottom:1px solid rgba(201,153,58,0.06);
+  }
+  .moments-list li::before{content:'›';position:absolute;left:4px;color:rgba(201,153,58,0.45);}
+
+  /* ── Settings ── */
+  .settings-btn{
+    position:fixed;bottom:calc(var(--safe-bot) + 20px);right:20px;z-index:150;
+    width:44px;height:44px;border-radius:50%;
+    background:rgba(5,13,26,0.9);border:1px solid rgba(201,153,58,0.28);
+    color:rgba(201,153,58,0.55);font-size:20px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);
+  }
+  .settings-overlay{position:fixed;inset:0;background:rgba(5,13,26,0.88);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+  .settings-overlay.open{opacity:1;pointer-events:all;}
+  .settings-panel{
+    width:100%;max-width:480px;max-height:85vh;
+    display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#0B1829 0%,#060E1C 100%);
+    border:1px solid rgba(201,153,58,0.22);border-bottom:none;
+    border-radius:20px 20px 0 0;
+    transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);
+  }
+  .settings-header{flex-shrink:0;padding:20px 20px 12px;}
+  .settings-scroll{flex:1;overflow-y:auto;padding:0 20px calc(var(--safe-bot)+24px);-webkit-overflow-scrolling:touch;}
+  .settings-overlay.open .settings-panel{transform:translateY(0);}
+  .settings-title{font-family:'IM Fell English',serif;font-size:20px;color:var(--gold-light);margin-bottom:4px;}
+  .settings-sub{font-size:12px;font-style:italic;color:rgba(201,153,58,0.4);margin-bottom:20px;}
+  .app-item{
+    display:flex;align-items:center;gap:12px;
+    background:rgba(255,255,255,0.03);border:1px solid rgba(201,153,58,0.1);
+    border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;
+    transition:background .15s;
+  }
+  .app-item:active{background:rgba(201,153,58,0.08);}
+  .app-icon{font-size:22px;flex-shrink:0;}
+  .app-name{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold-pale);}
+  .app-cat{font-size:11px;font-style:italic;color:rgba(201,153,58,0.4);}
+  .settings-credit{text-align:center;font-size:11px;color:rgba(232,240,250,0.2);margin-top:20px;letter-spacing:0.05em;}
+
+  .empty{text-align:center;padding:60px 20px;color:rgba(232,240,250,0.28);font-size:16px;font-style:italic;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <span style="font-size:22px">🏛️</span>
+    <h1>Présidents de l'Assemblée nationale</h1>
+  </div>
+  <div class="subtitle">De la IIIe République à nos jours</div>
+  <div class="search-wrap">
+    <input id="searchInput" type="text" placeholder="Rechercher un président…" autocomplete="off" autocorrect="off" spellcheck="false">
+    <button class="search-clear" id="searchClear">✕</button>
+  </div>
+  <div class="filters" id="repFilters"></div>
+</header>
+
+<div class="count-bar" id="countBar"></div>
+<div class="list" id="listContainer"></div>
+
+<button class="settings-btn" id="settingsBtn">⚙️</button>
+
+<!-- Modal détail -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head" id="modalHead"></div>
+    <div class="modal-divider"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Modal settings -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <div class="settings-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="settings-title">Nos autres apps</div>
+          <div class="settings-sub">Histoire de France</div>
+        </div>
+        <button onclick="closeSettings()" style="background:rgba(201,153,58,0.1);border:1px solid rgba(201,153,58,0.2);color:rgba(201,153,58,0.7);font-size:16px;border-radius:50%;width:32px;height:32px;cursor:pointer;">✕</button>
+      </div>
+    </div>
+    <div class="settings-scroll">
+      <div id="otherApps"></div>
+      <div class="settings-credit">Conçu avec Claude · Anthropic</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════════════
+const MGA_CONFIG = {
+  appCourante: "assemblee",
+  autresApps: [
+    {id:"rois",       nom:"Rois de France",                icone:"👑", cat:"Histoire · IIIe siècle – 1830",   appStoreId:"id6761323546"},
+    {id:"presidents", nom:"Présidents de la République",   icone:"🎖️", cat:"Histoire · 1848 – aujourd'hui",  appStoreId:"id6761424444"},
+    {id:"academie",   nom:"Académie française",            icone:"🪶", cat:"Culture · 1635 – aujourd'hui",   appStoreId:"id6761334922"},
+    {id:"theatres",   nom:"Théâtres Paris",                icone:"🎭", cat:"Paris · 39 théâtres",            appStoreId:"id6760929391"},
+    {id:"scenes",     nom:"Scènes Paris",                  icone:"🎵", cat:"Paris · 23 salles de concert",   appStoreId:"id6761293938"},
+    {id:"musees",     nom:"Musées de Paris",               icone:"🏛️", cat:"Paris · 37 musées",             appStoreId:"id6760890465"},
+    {id:"cimetieres", nom:"Cimetières Paris",              icone:"🌿", cat:"Paris · Tombes célèbres",        appStoreId:"id6760751055"},
+    {id:"restaurants",nom:"MesRestaurants",                icone:"🍽️", cat:"Mes restos favoris",            appStoreId:"id6760617965"},
+    {id:"frigo",      nom:"Frigo Manager",                 icone:"🧊", cat:"Anti-gaspillage alimentaire",    appStoreId:"id6759219383"},
+    {id:"cave",       nom:"Cave Manager",                  icone:"🍷", cat:"Ma cave à vin",                  appStoreId:"id6760126279"},
+    {id:"medi",       nom:"MediSafe-Pharmacie",            icone:"💊", cat:"Gestion des médicaments",        appStoreId:"id6761271324"},
+  ]
+};
+
+const REP_COLORS = {
+  "Chambre des Députés": {bg:"rgba(139,96,16,0.14)", border:"rgba(139,96,16,0.4)",  text:"#E8C07A"},
+  "IVe République":      {bg:"rgba(26,92,122,0.14)", border:"rgba(26,92,122,0.4)",  text:"#80C8E8"},
+  "Ve République":       {bg:"rgba(26,58,138,0.14)", border:"rgba(26,58,138,0.4)",  text:"#80A8F8"},
+};
+
+const PRESIDENTS = [
+
+// ── CHAMBRE DES DÉPUTÉS (IIIe République) ──────────────────────────────
+{id:1, name:"Jules Grévy", parti:"Républicain", rep:"Chambre des Députés", debut:1876, fin:1879, vivant:false,
+ wikiTitle:"Jules_Grévy",
+ desc:"Avocat et homme politique républicain, Jules Grévy fut le premier président de la Chambre des Députés de la IIIe République. Son élection symbolisa le triomphe définitif des républicains sur les monarchistes. Il quitta la présidence pour devenir Président de la République en 1879.",
+ moments:"Premier président républicain de la Chambre · Devint Président de la République (1879) · Figure de la consolidation républicaine"},
+
+{id:2, name:"Léon Gambetta", parti:"Union républicaine", rep:"Chambre des Députés", debut:1879, fin:1881, vivant:false,
+ wikiTitle:"Léon_Gambetta",
+ desc:"Orateur légendaire et héros de la résistance de 1870, Gambetta présida la Chambre après avoir dominé dix ans de vie politique républicaine. Son «grand ministère» de 1881-1882 fut un échec cuisant, et il mourut à 44 ans, laissant la République orpheline de son père fondateur.",
+ moments:"Proclamation de la République (1870) · Organisation de la résistance à l'invasion prussienne · Mort à 44 ans (1882)"},
+
+{id:3, name:"Henri Brisson", parti:"Parti républicain radical", rep:"Chambre des Députés", debut:1881, fin:1885, vivant:false,
+ wikiTitle:"Henri_Brisson",
+ desc:"Figure du radicalisme laïque, Henri Brisson présida la Chambre à plusieurs reprises sous la IIIe République (1881, 1894-1898, 1904-1905). Défenseur acharné de la séparation de l'Église et de l'État, il fut aussi deux fois Président du Conseil et joua un rôle central dans l'affaire Dreyfus.",
+ moments:"Champion de la laïcité · Deux fois Président du Conseil · Rôle pivot dans l'affaire Dreyfus"},
+
+{id:4, name:"Charles Floquet", parti:"Radical-socialiste", rep:"Chambre des Députés", debut:1885, fin:1888, vivant:false,
+ wikiTitle:"Charles_Floquet",
+ desc:"Avocat et orateur républicain, Charles Floquet présida la Chambre dans la période tourmentée du boulangisme. Il est resté célèbre pour avoir blessé le général Boulanger en duel en 1888, lui lançant : « À votre âge, général, Napoléon était mort. » Il fut ensuite Président du Conseil.",
+ moments:"Duel victorieux contre le général Boulanger (1888) · Résistance au boulangisme · Président du Conseil 1888-1889"},
+
+{id:5, name:"Paul Deschanel", parti:"Centre gauche", rep:"Chambre des Députés", debut:1898, fin:1920, vivant:false,
+ wikiTitle:"Paul_Deschanel",
+ desc:"Orateur brillant et académicien, Paul Deschanel présida la Chambre à plusieurs reprises (1898-1902, 1912-1920) et fut élu Président de la République en janvier 1920. Sa présidence dura moins d'un an : une grave dépression nerveuse l'obligea à démissionner, avec l'épisode célèbre de la chute du train présidentiel.",
+ moments:"Académicien français · Quatre fois président de la Chambre · Président de la République (1920) · L'épisode de la chute du train"},
+
+{id:6, name:"Édouard Herriot", parti:"Parti radical", rep:"Chambre des Députés", debut:1936, fin:1940, vivant:false,
+ wikiTitle:"Édouard_Herriot",
+ desc:"Maire de Lyon pendant cinquante-deux ans et figure tutélaire du radicalisme, Édouard Herriot présida la Chambre des Députés de 1936 à 1940. Farouche défenseur de la République, il fut l'un des 80 parlementaires qui refusèrent de voter les pleins pouvoirs à Pétain le 10 juillet 1940.",
+ moments:"Maire de Lyon (1905-1957) · Trois fois Président du Conseil · Vota contre Pétain le 10 juillet 1940 · Déporté en Allemagne"},
+
+{id:7, name:"Fernand Bouisson", parti:"SFIO", rep:"Chambre des Députés", debut:1927, fin:1936, vivant:false,
+ wikiTitle:"Fernand_Bouisson",
+ desc:"Socialiste indépendant, Fernand Bouisson fut l'un des présidents les plus longuement en poste à la Chambre des Députés (neuf ans). Ancien syndicaliste marseillais, il présida les sessions agitées du Cartel des gauches et du Front Populaire naissant. Il fut brièvement Président du Conseil en 1935.",
+ moments:"Neuf ans à la présidence · Président du Conseil (1935, 48 heures) · Présida l'avènement du Front Populaire"},
+
+// ── IVe RÉPUBLIQUE ──────────────────────────────────────────────────────
+{id:8, name:"Édouard Herriot", parti:"Parti radical", rep:"IVe République", debut:1947, fin:1953, vivant:false,
+ wikiTitle:"Édouard_Herriot",
+ desc:"Figure indestructible du radicalisme, Édouard Herriot présida l'Assemblée nationale de la IVe République pendant six ans, après avoir été déporté par les nazis. À plus de 75 ans, il incarnait encore la continuité républicaine. Il s'opposa fermement au projet de Communauté européenne de défense en 1953.",
+ moments:"Déporté en Allemagne (1944) · Six ans à la présidence de la IVe République · Adversaire de la CED · Deux mandats séparés par plus de six ans"},
+
+{id:9, name:"Pierre Schneiter", parti:"MRP", rep:"IVe République", debut:1953, fin:1954, vivant:false,
+ wikiTitle:"Pierre_Schneiter",
+ desc:"Homme politique démocrate-chrétien et ancien résistant, Pierre Schneiter présida brièvement l'Assemblée nationale en remplacement d'Herriot. Maire de Reims pendant de longues années, il représentait l'aile catholique et modérée de la coalition gouvernementale de la IVe République.",
+ moments:"Résistant · Maire de Reims (1947-1959) · Représentant du MRP"},
+
+{id:10, name:"André Le Troquer", parti:"SFIO", rep:"IVe République", debut:1954, fin:1958, vivant:false,
+ wikiTitle:"André_Le_Troquer",
+ desc:"Socialiste et résistant de la première heure, André Le Troquer fut le dernier président de l'Assemblée de la IVe République. Impliqué dans le scandale des « ballets roses », il présida la session dramatique de mai 1958 et remit symboliquement le pouvoir au général de Gaulle.",
+ moments:"Dernier président de l'Assemblée de la IVe République · Scandale des ballets roses · Remit le pouvoir à de Gaulle (juin 1958)"},
+
+// ── Ve RÉPUBLIQUE ───────────────────────────────────────────────────────
+{id:11, name:"Jacques Chaban-Delmas", parti:"UNR / RPR", rep:"Ve République", debut:1958, fin:1988, vivant:false,
+ wikiTitle:"Jacques_Chaban-Delmas",
+ desc:"Record absolu : Jacques Chaban-Delmas présida l'Assemblée nationale pendant trois mandats distincts, soit plus de vingt ans cumulés (1958-1969, 1978-1981, 1986-1988). Général de brigade à 29 ans, résistant légendaire, il fut aussi Premier ministre de Georges Pompidou (1969-1972) et porta le projet de « Nouvelle Société ». La présidence de l'Assemblée fut son fief politique indissociable de Bordeaux dont il fut maire pendant quarante-huit ans.",
+ moments:"Record : 3 mandats à la présidence (22 ans cumulés) · Général à 29 ans · Premier ministre (1969-1972) · Maire de Bordeaux 48 ans"},
+
+{id:12, name:"Achille Peretti", parti:"UDR", rep:"Ve République", debut:1969, fin:1973, vivant:false,
+ wikiTitle:"Achille_Peretti",
+ desc:"Gaulliste corse et fidèle de Pompidou, Achille Peretti succéda à Chaban-Delmas lorsque celui-ci rejoignit Matignon. Ancien résistant et parachutiste, il fut aussi maire de Neuilly-sur-Seine pendant quatorze ans. Sa présidence discrète et loyale incarna le gaullisme institutionnel.",
+ moments:"Résistant et parachutiste · Maire de Neuilly-sur-Seine · Loyaliste pompidolien"},
+
+{id:13, name:"Edgar Faure", parti:"UDR / RPR", rep:"Ve République", debut:1973, fin:1978, vivant:false,
+ wikiTitle:"Edgar_Faure",
+ desc:"Figure tutélaire et esprit brillant, Edgar Faure avait déjà été deux fois Président du Conseil sous la IVe République. Sa célèbre réplique — « Ce n'est pas la girouette qui tourne, c'est le vent » — résume sa virtuosité politique. À l'Assemblée, il modernisa le règlement et guida la transition giscardienne. Académicien et auteur de romans policiers sous pseudonyme.",
+ moments:"Deux fois Président du Conseil (IVe Rép.) · Ministre de l'Éducation nationale (réforme Faure 1968) · Académicien français · Auteur de romans policiers"},
+
+{id:14, name:"Louis Mermaz", parti:"PS", rep:"Ve République", debut:1981, fin:1986, vivant:false,
+ wikiTitle:"Louis_Mermaz",
+ desc:"Fidèle parmi les fidèles de François Mitterrand depuis l'École normale supérieure, Louis Mermaz présida la première Assemblée de la gauche sous la Ve République. Artisan du congrès d'Épinay (1971), il contribua à la refondation du PS. Sa présidence inaugura l'ère des grandes réformes mitterrandistes.",
+ moments:"Congrès d'Épinay (1971) · Première alternance de gauche (1981) · Normalien, ami de Mitterrand"},
+
+{id:15, name:"Laurent Fabius", parti:"PS", rep:"Ve République", debut:1988, fin:2000, vivant:true,
+ wikiTitle:"Laurent_Fabius",
+ desc:"Double président de l'Assemblée nationale (1988-1992 et 1997-2000), Laurent Fabius cumule les grandes fonctions de la Ve République : le plus jeune Premier ministre (32 ans, 1984-1986), ministre de l'Économie, et président du Conseil constitutionnel (2016-2022). L'affaire du sang contaminé marqua durablement sa carrière. Normalien et agrégé, il resta l'une des figures centrales de la gauche française pendant quarante ans.",
+ moments:"Plus jeune Premier ministre de la Ve (32 ans) · 2 présidences de l'Assemblée · Affaire du sang contaminé · Président du Conseil constitutionnel (2016-2022)"},
+
+{id:16, name:"Henri Emmanuelli", parti:"PS", rep:"Ve République", debut:1992, fin:1993, vivant:false,
+ wikiTitle:"Henri_Emmanuelli",
+ desc:"Socialiste de gauche et figure des Landes, Henri Emmanuelli présida l'Assemblée nationale lors de la dernière année de la majorité Rocard-Bérégovoy avant la défaite de 1993. Trésorier controversé du PS lors de l'affaire Urba, il représenta toujours l'aile gauche du parti face à la social-démocratie.",
+ moments:"Affaire Urba · Incarnation de l'aile gauche du PS · Présidence en fin de législature (1992-1993)"},
+
+{id:17, name:"Philippe Séguin", parti:"RPR", rep:"Ve République", debut:1993, fin:1997, vivant:false,
+ wikiTitle:"Philippe_Séguin",
+ desc:"Gaulliste social passionné et orateur hors pair, Philippe Séguin mena en 1992 la campagne du « Non » contre le traité de Maastricht avec une fougue qui fit sa légende. Sa présidence de l'Assemblée fut marquée par une volonté de revaloriser le Parlement et une relation tendue avec Chirac. Il présida ensuite le RPR puis la Cour des comptes jusqu'à sa mort subite en 2010.",
+ moments:"Non à Maastricht (1992) · Modernisation du rôle de l'Assemblée · Président de la Cour des comptes · Mort subite à 66 ans"},
+
+{id:18, name:"Raymond Forni", parti:"PS", rep:"Ve République", debut:2000, fin:2002, vivant:false,
+ wikiTitle:"Raymond_Forni",
+ desc:"Avocat et député du Territoire de Belfort, Raymond Forni succéda à Laurent Fabius en cours de législature. Sa présidence courte mais marquée reste liée à la loi Forni sur la présomption d'innocence (2000). Il présida les derniers mois de la cohabitation Jospin/Chirac avant la dissolution surprise de 2002.",
+ moments:"Loi sur la présomption d'innocence (2000) · Cohabitation Jospin/Chirac · Décédé prématurément en 2008"},
+
+{id:19, name:"Jean-Louis Debré", parti:"RPR / UMP", rep:"Ve République", debut:2002, fin:2007, vivant:true,
+ wikiTitle:"Jean-Louis_Debré",
+ desc:"Fils du constitutionnaliste Michel Debré, rédacteur de la Constitution de 1958, Jean-Louis Debré présida l'Assemblée sous la présidence Chirac dont il était l'ami personnel le plus proche. Il défendit la loi interdisant les signes religieux ostentatoires à l'école en 2004. Il présida ensuite le Conseil constitutionnel (2007-2016).",
+ moments:"Fils de Michel Debré · Ami personnel de Chirac · Loi sur les signes religieux (2004) · Président du Conseil constitutionnel (2007-2016)"},
+
+{id:20, name:"Bernard Accoyer", parti:"UMP", rep:"Ve République", debut:2007, fin:2012, vivant:true,
+ wikiTitle:"Bernard_Accoyer",
+ desc:"Chirurgien orthopédiste avant d'être élu, Bernard Accoyer présida l'Assemblée sous la présidence Sarkozy. Sa mandature fut marquée par la réforme constitutionnelle de 2008 qui renforça significativement les droits du Parlement : ordre du jour partagé, questions prioritaires de constitutionnalité, lois de programmation. Une réforme institutionnelle majeure obtenue à une voix près.",
+ moments:"Réforme constitutionnelle 2008 (droits du Parlement) · Médecin de formation · Majorité obtenue à une voix près"},
+
+{id:21, name:"Claude Bartolone", parti:"PS", rep:"Ve République", debut:2012, fin:2017, vivant:true,
+ wikiTitle:"Claude_Bartolone",
+ desc:"Fils d'immigré maltais élevé à Saint-Denis, Claude Bartolone présida l'Assemblée nationale sous la présidence Hollande. Ancien président du conseil général de Seine-Saint-Denis pendant quinze ans, il fut une voix singulière des banlieues et de la France populaire au cœur des institutions. Sa candidature à la présidence de la République en 2017 n'aboutit pas.",
+ moments:"15 ans à la tête du conseil général du 93 · Voix des banlieues dans les institutions · Candidature à la présidentielle 2017"},
+
+{id:22, name:"François de Rugy", parti:"LaREM", rep:"Ve République", debut:2017, fin:2018, vivant:true,
+ wikiTitle:"François_de_Rugy",
+ desc:"Ancien co-président d'Europe Écologie-Les Verts devenu l'un des premiers macronistes, François de Rugy quitta la présidence de l'Assemblée au bout de onze mois pour rejoindre le gouvernement comme ministre de la Transition écologique. Il dut lui-même démissionner du gouvernement en 2019 après le «homard-gate» révélé par Mediapart.",
+ moments:"Ancien écologiste devenu macroniste · Onze mois à la présidence · Ministre de la Transition écologique · Affaire des homards (2019)"},
+
+{id:23, name:"Richard Ferrand", parti:"LaREM", rep:"Ve République", debut:2018, fin:2022, vivant:true,
+ wikiTitle:"Richard_Ferrand",
+ desc:"Cofondateur et premier secrétaire général d'En Marche, Richard Ferrand fut l'un des compagnons de la première heure d'Emmanuel Macron. Sa présidence fut marquée par une grande loyauté au chef de l'État mais aussi par l'affaire des Mutuelles de Bretagne. Battu dans sa circonvention lors des législatives de 2022, il ne se représenta pas à la présidence.",
+ moments:"Premier secrétaire général d'En Marche (2016) · Affaire des Mutuelles de Bretagne · Défait aux législatives 2022"},
+
+{id:24, name:"Yaël Braun-Pivet", parti:"Renaissance", rep:"Ve République", debut:2022, fin:null, vivant:true,
+ wikiTitle:"Yaël_Braun-Pivet",
+ desc:"Première femme élue à la présidence de l'Assemblée nationale dans toute l'histoire de la République française, Yaël Braun-Pivet est avocate de formation. Réélue en juillet 2024 à l'issue des législatives anticipées convoquées par Macron, elle préside une Assemblée fragmentée sans majorité absolue, dans un contexte institutionnel inédit. Elle avait présidé la commission des Lois de 2017 à 2022.",
+ moments:"Première femme présidente de l'Assemblée (2022) · Réélue en 2024 · Avocate · Ancienne présidente de la commission des Lois"},
+];
+
+// ═══════════════════════════════════════════════
+//  WIKIPEDIA — cache localStorage
+// ═══════════════════════════════════════════════
+const CACHE_PFX = "an_img_";
+const CACHE_TTL = 7 * 24 * 3600 * 1000;
+
+function getCached(title) {
+  try {
+    const raw = localStorage.getItem(CACHE_PFX + title);
+    if (!raw) return null;
+    const {url, ts} = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem(CACHE_PFX + title); return null; }
+    return url;
+  } catch(e) { return null; }
+}
+function setCached(title, url) {
+  try { localStorage.setItem(CACHE_PFX + title, JSON.stringify({url, ts:Date.now()})); } catch(e) {}
+}
+async function getWikiImg(wikiTitle) {
+  const cached = getCached(wikiTitle);
+  if (cached) return cached;
+  try {
+    const r = await fetch(
+      `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`,
+      {headers:{"Accept":"application/json"}}
+    );
+    if (!r.ok) return null;
+    const d = await r.json();
+    const url = d.thumbnail?.source || d.originalimage?.source || null;
+    if (url) setCached(wikiTitle, url);
+    return url;
+  } catch(e) { return null; }
+}
+function applyPortrait(wikiTitle, imgEl, spinEl) {
+  if (!imgEl) return;
+  getWikiImg(wikiTitle).then(url => {
+    if (spinEl) spinEl.style.display = "none";
+    if (!url || !imgEl) return;
+    imgEl.src = url;
+    imgEl.onload = () => {
+      imgEl.classList.add("loaded");
+      const ph = imgEl.closest(".portrait-wrap, .modal-portrait")?.querySelector(".portrait-placeholder");
+      if (ph) ph.style.display = "none";
+    };
+    imgEl.onerror = () => { imgEl.style.display = "none"; };
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  UI
+// ═══════════════════════════════════════════════
+let activeRep = "Tous";
+let searchQuery = "";
+
+function buildFilters() {
+  const reps = ["Tous", ...Object.keys(REP_COLORS)];
+  const c = document.getElementById("repFilters");
+  c.innerHTML = "";
+  reps.forEach(r => {
+    const btn = document.createElement("button");
+    btn.className = "pill" + (r === activeRep ? " active" : "");
+    btn.textContent = r;
+    btn.onclick = () => { activeRep = r; buildFilters(); renderList(); };
+    c.appendChild(btn);
+  });
+}
+
+function durStr(p) {
+  if (!p.fin) return "en poste";
+  const y1 = p.debut, y2 = p.fin;
+  const diff = y2 - y1;
+  if (diff < 1) return "< 1 an";
+  return diff + " an" + (diff > 1 ? "s" : "");
+}
+
+function buildCard(p) {
+  const card = document.createElement("div");
+  card.className = "card";
+  const rc = REP_COLORS[p.rep] || REP_COLORS["Ve République"];
+  const endLabel = p.fin ? p.fin : "aujourd'hui";
+  const duree = durStr(p);
+
+  card.innerHTML = `
+    <div class="portrait-wrap">
+      <div class="portrait-spinner" id="spin_${p.id}"><div class="portrait-spinner-ring"></div></div>
+      <div class="portrait-placeholder">🏛️</div>
+      <img alt="${p.name}" loading="lazy">
+    </div>
+    <div class="pres-info">
+      <div class="pres-rep" style="color:${rc.text}">${p.rep}</div>
+      <div class="pres-name">${p.name}${!p.fin ? `<span class="badge-actuel">en poste</span>` : ""}</div>
+      <div class="pres-parti">${p.parti}</div>
+      <div class="pres-dates">${p.debut} – ${endLabel} · ${duree}</div>
+    </div>
+    <div class="pres-arrow">›</div>
+  `;
+  const imgEl = card.querySelector("img");
+  const spinEl = card.querySelector(".portrait-spinner");
+  applyPortrait(p.wikiTitle, imgEl, spinEl);
+  card.onclick = () => openModal(p);
+  return card;
+}
+
+function renderList() {
+  const q = searchQuery.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+  const filtered = PRESIDENTS.filter(p => {
+    const matchRep = activeRep === "Tous" || p.rep === activeRep;
+    if (!matchRep) return false;
+    if (!q) return true;
+    const haystack = (p.name + " " + p.parti + " " + p.rep + " " + p.debut)
+      .toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+    return haystack.includes(q);
+  });
+
+  document.getElementById("countBar").textContent =
+    filtered.length === 1 ? "1 président" : `${filtered.length} présidents`;
+
+  const c = document.getElementById("listContainer");
+  c.innerHTML = "";
+  if (filtered.length === 0) {
+    c.innerHTML = `<div class="empty">Aucun résultat pour «&nbsp;${searchQuery}&nbsp;»</div>`;
+    return;
+  }
+  filtered.forEach(p => c.appendChild(buildCard(p)));
+}
+
+// ─── Modal ──────────────────────────────────────
+function openModal(p) {
+  const rc = REP_COLORS[p.rep] || REP_COLORS["Ve République"];
+  const endLabel = p.fin ? p.fin : "aujourd'hui";
+
+  document.getElementById("modalHead").innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-portrait">
+      <div class="portrait-placeholder">🏛️</div>
+      <img id="modalImg" alt="${p.name}">
+    </div>
+    <div class="modal-title-block">
+      <div class="modal-rep-tag" style="background:${rc.bg};border:1px solid ${rc.border};color:${rc.text}">${p.rep}</div>
+      <div class="modal-name">${p.name}</div>
+      <div class="modal-parti">${p.parti}</div>
+      <div class="modal-dates-big">${p.debut} – ${endLabel}</div>
+    </div>
+  `;
+
+  const moments = p.moments.split("·").map(m => m.trim()).filter(Boolean);
+  document.getElementById("modalBody").innerHTML = `
+    <div class="modal-section-title">Biographie</div>
+    <div class="modal-desc">${p.desc}</div>
+    <div class="modal-section-title">Moments clés</div>
+    <ul class="moments-list">
+      ${moments.map(m => `<li>${m}</li>`).join("")}
+    </ul>
+  `;
+
+  const imgEl = document.getElementById("modalImg");
+  applyPortrait(p.wikiTitle, imgEl, null);
+
+  document.getElementById("modalOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+// ─── Settings ───────────────────────────────────
+function buildSettings() {
+  const c = document.getElementById("otherApps");
+  c.innerHTML = "";
+
+  MGA_CONFIG.autresApps.forEach(app => {
+    const div = document.createElement("div");
+    div.className = "app-item";
+    div.innerHTML = `<span class="app-icon">${app.icone}</span><div><div class="app-name">${app.nom}</div><div class="app-cat">${app.cat}</div></div>`;
+    div.onclick = () => {
+      if (app.appStoreId && !app.appStoreId.startsWith("id_")) {
+        window.open("https://apps.apple.com/app/" + app.appStoreId, "_blank");
+      }
+    };
+    c.appendChild(div);
+  });
+}
+function closeSettings() {
+  document.getElementById("settingsOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+// ─── Search ─────────────────────────────────────
+const searchInput = document.getElementById("searchInput");
+const searchClear = document.getElementById("searchClear");
+searchInput.addEventListener("input", () => {
+  searchQuery = searchInput.value;
+  searchClear.style.display = searchQuery ? "block" : "none";
+  renderList();
+});
+searchClear.onclick = () => {
+  searchInput.value = "";
+  searchQuery = "";
+  searchClear.style.display = "none";
+  renderList();
+};
+
+// ─── Events ─────────────────────────────────────
+document.getElementById("modalOverlay").addEventListener("click", e => {
+  if (e.target === document.getElementById("modalOverlay")) closeModal();
+});
+document.getElementById("settingsOverlay").addEventListener("click", e => {
+  if (e.target === document.getElementById("settingsOverlay")) closeSettings();
+});
+document.getElementById("settingsBtn").onclick = () => {
+  document.getElementById("settingsOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+};
+
+// ─── Init ────────────────────────────────────────
+buildFilters();
+buildSettings();
+renderList();
+</script>
+</body>
+</html>
